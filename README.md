@@ -42,6 +42,13 @@ Los tokens se estiman como `ceil(caracteres / 4)` para el prompt y para la respu
 
 `QuotaResetScheduler` reinicia el contador de solicitudes cada minuto (`0 * * * * *`) y la cuota mensual el primer día de cada mes (`0 0 0 1 * *`).
 
+## Servidor siempre activo
+
+El plan gratuito de Render suspende el servicio tras 15 minutos sin tráfico. Para evitarlo:
+
+- `KeepAliveScheduler` hace una petición a `/actuator/health` cada 10 minutos usando la URL pública que Render expone en `RENDER_EXTERNAL_URL`.
+- El workflow `.github/workflows/keep-alive.yml` despierta el servicio cada 10 minutos desde GitHub Actions como respaldo.
+
 ## Ejecutar en local
 
 ```bash
