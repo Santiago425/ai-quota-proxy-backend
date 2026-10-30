@@ -29,7 +29,7 @@ public class QuotaProxyService implements AIGenerationService {
             throw new QuotaExceededException(account.remainingTokens(), requiredTokens);
         }
         GenerationResponse response = next.generate(request);
-        account.consume(response.getTotalTokens(), clock.today());
+        account.consume(response.getChargedTokens(), clock.today());
         return response.passedThrough("QuotaProxyService");
     }
 }

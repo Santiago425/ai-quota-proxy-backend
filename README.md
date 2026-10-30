@@ -5,8 +5,8 @@ API en Spring Boot que expone un servicio de generación de texto simulado prote
 ## Patrón Proxy
 
 ```
-Cliente ──► RateLimitProxyService ──► QuotaProxyService ──► MockAIGenerationService
-              (429 Too Many Requests)   (402 Payment Required)   (servicio real)
+Cliente ──► RateLimitProxyService ──► QuotaProxyService ──► CacheProxyService ──► MockAIGenerationService
+              (429 Too Many Requests)   (402 Payment Required)   (respuesta en caché)    (servicio real)
 ```
 
 | Rol del patrón | Clase |
@@ -15,6 +15,9 @@ Cliente ──► RateLimitProxyService ──► QuotaProxyService ──► Mo
 | Sujeto real | `MockAIGenerationService` — simula la generación con `Thread.sleep(1200)` y devuelve un texto predefinido aleatorio |
 | Proxy 1 | `RateLimitProxyService` — verifica las solicitudes por minuto; si se supera responde **429** con el encabezado `Retry-After` |
 | Proxy 2 | `QuotaProxyService` — verifica la cuota mensual, descuenta los tokens consumidos y responde **402** si no alcanza |
+| Proxy 3 | `CacheProxyService` — si el prompt ya se respondió en los últimos 10 minutos devuelve la respuesta guardada al instante, sin llamar al servicio real y sin cobrar tokens |
+
+`RateLimitProxyService`, al ser el primer eslabón, también registra en `AuditLogService` el resultado de cada solicitud: generada, desde caché, bloqueada por límite (429) o por cuota (402).
 
 La cadena se arma en `ProxyChainConfig`. El controlador solo conoce la interfaz `AIGenerationService`, así que no sabe si habla con un proxy o con el servicio real.
 
@@ -37,6 +40,7 @@ Los tokens se estiman como `ceil(caracteres / 4)` para el prompt y para la respu
 | GET | `/api/quota/history?userId=` | Uso diario de los últimos 7 días |
 | POST | `/api/quota/upgrade` | Mejora de plan (FREE → PRO, o al plan indicado). Cuerpo: `{ "userId", "targetPlan" }` |
 | GET | `/api/quota/plans` | Lista de planes disponibles |
+| GET | `/api/audit?userId=` | Registro de las últimas solicitudes del usuario con su resultado y los tokens cobrados |
 
 ## Tareas programadas
 
