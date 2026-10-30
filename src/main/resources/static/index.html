@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caudal IA · API</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #e6e9ee;
+      --surface: #f8f9fb;
+      --sunk: #eef1f5;
+      --ink: #172033;
+      --muted: #5e687a;
+      --line: #cfd5de;
+      --cobalt: #2f4bff;
+      --green: #1d8456;
+      --green-soft: #ddf1e7;
+      --red: #c4362c;
+      --amber: #b97700;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'IBM Plex Sans', system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 16px 64px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .mark {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 20px;
+    }
+
+    .mark i {
+      width: 5px;
+      border-radius: 2px;
+      background: var(--cobalt);
+    }
+
+    .mark i:nth-child(1) { height: 40%; opacity: .45; }
+    .mark i:nth-child(2) { height: 70%; opacity: .7; }
+    .mark i:nth-child(3) { height: 100%; }
+
+    h1 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(30px, 5vw, 44px);
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      margin: 28px 0 12px;
+    }
+
+    .lead {
+      color: var(--muted);
+      max-width: 60ch;
+      margin: 0 0 24px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: var(--sunk);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .status::before {
+      content: '';
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+
+    .status.up {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .status.up::before {
+      background: var(--green);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .button {
+      display: inline-block;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      padding: 9px 18px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .button:hover {
+      background: var(--cobalt);
+    }
+
+    section {
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 1px 0 var(--line);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 16px;
+      margin: 0 0 16px;
+    }
+
+    .chain {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chain span {
+      background: var(--sunk);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+    }
+
+    .chain b {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .chain small {
+      display: block;
+      font-family: 'IBM Plex Sans', sans-serif;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 8px;
+      border-top: 1px solid var(--sunk);
+      vertical-align: top;
+    }
+
+    th {
+      border-top: 0;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    code {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+    }
+
+    .method {
+      display: inline-block;
+      min-width: 46px;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--cobalt);
+    }
+
+    .method.post {
+      color: var(--amber);
+    }
+
+    .plans td:first-child {
+      font-weight: 600;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand"><span class="mark"><i></i><i></i><i></i></span>Caudal IA</div>
+    <h1>API de la plataforma de consumo de IA</h1>
+    <p class="lead">Servicio de generación de texto simulado protegido por una cadena de proxies que controla las solicitudes por minuto, la cuota mensual de tokens según el plan y la caché de respuestas.</p>
+
+    <div class="actions">
+      <span class="status" id="status">Comprobando estado…</span>
+      <a class="button" href="https://ai-quota-proxy-frontend.vercel.app">Abrir la aplicación</a>
+    </div>
+
+    <section>
+      <h2>Cadena del patrón Proxy</h2>
+      <div class="chain">
+        <span>RateLimitProxyService<small>429 Too Many Requests</small></span>
+        <b>→</b>
+        <span>QuotaProxyService<small>402 Payment Required</small></span>
+        <b>→</b>
+        <span>CacheProxyService<small>Respuestas repetidas</small></span>
+        <b>→</b>
+        <span>MockAIGenerationService<small>Servicio real</small></span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Endpoints</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Ruta</th><th>Descripción</th></tr>
+          <tr><td><span class="method post">POST</span><code>/api/ai/generate</code></td><td>Genera texto pasando por toda la cadena de proxies</td></tr>
+          <tr><td><span class="method">GET</span><code>/api/quota/status?userId=</code></td><td>Tokens usados, restantes, fecha de reinicio y plan actual</td></tr>
+          <tr><td><span class="method">GET</span><code>/api/quota/history?userId=</code></td><td>Uso diario de los últimos 7 días</td></tr>
+          <tr><td><span class="method post">POST</span><code>/api/quota/upgrade</code></td><td>Mejora de plan (FREE → PRO)</td></tr>
+          <tr><td><span class="method">GET</span><a href="/api/quota/plans"><code>/api/quota/plans</code></a></td><td>Planes disponibles</td></tr>
+          <tr><td><span class="method">GET</span><code>/api/audit?userId=</code></td><td>Registro de las últimas solicitudes del usuario</td></tr>
+          <tr><td><span class="method">GET</span><a href="/actuator/health"><code>/actuator/health</code></a></td><td>Estado del servicio</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Planes</h2>
+      <div class="table-wrap">
+        <table class="plans">
+          <tr><th>Plan</th><th>Solicitudes por minuto</th><th>Tokens al mes</th></tr>
+          <tr><td>FREE</td><td>10</td><td>50.000</td></tr>
+          <tr><td>PRO</td><td>60</td><td>500.000</td></tr>
+          <tr><td>ENTERPRISE</td><td>Ilimitadas</td><td>Ilimitados</td></tr>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script>
+    fetch('/actuator/health')
+      .then((response) => response.json())
+      .then((data) => {
+        const element = document.getElementById('status')
+        if (data.status === 'UP') {
+          element.textContent = 'Servicio en línea'
+          element.classList.add('up')
+        } else {
+          element.textContent = 'Servicio con problemas'
+        }
+      })
+      .catch(() => {
+        document.getElementById('status').textContent = 'No se pudo comprobar el estado'
+      })
+  </script>
+</body>
+</html>
